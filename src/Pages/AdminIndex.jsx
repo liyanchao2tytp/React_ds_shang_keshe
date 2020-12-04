@@ -4,17 +4,17 @@ import {
   DesktopOutlined,
   PieChartOutlined,
   FileOutlined,
-  TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import "../static/css/AdminIndex.css";
-import AddArticle from "./AddGoods";
 import { Route } from "react-router-dom";
-import { OmitProps } from "antd/lib/transfer/ListBody";
 import GoodsList from "./GoodsList";
 import RecycleList from "./RecycleList";
 import AddGoods from "./AddGoods";
 import Author from "../components/Author";
+import EmpList from "../components/EmpList";
+import SupplierList from "../components/SupplierList";
+
 const { Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -25,7 +25,6 @@ function AdminIndex(props) {
     setCollapsed(collapsed);
   };
   const handleOther = (e) => {
-    console.log(e);
     switch (e.key) {
       case "usr":
         props.history.push("/home/self");
@@ -34,7 +33,7 @@ function AdminIndex(props) {
     }
   };
 
-  // 商品库存管理菜单
+  // 商品库存管理
   const handleGoodsStore = (e) => {
     switch (e.key) {
       case "addGoods":
@@ -45,6 +44,18 @@ function AdminIndex(props) {
         break;
       case "recycleList":
         props.history.push("/home/recycle");
+        break;
+    }
+  };
+  // 用户管理
+  const handleAdmin = (e) => {
+    console.log(e);
+    switch (e.key) {
+      case "admin-emp":
+        props.history.push("/home/admin/emp");
+        break;
+      case "admin-supplier":
+        props.history.push("/home/admin/sup");
         break;
     }
   };
@@ -62,12 +73,20 @@ function AdminIndex(props) {
           <Menu.Item key="1" icon={<PieChartOutlined />}>
             <span>工作台</span>
           </Menu.Item>
-          <Menu.Item key="2" icon={<DesktopOutlined />}>
-            <span>添加文章</span>
-          </Menu.Item>
+          <SubMenu
+            key="sub"
+            icon={<DesktopOutlined />}
+            title="用户管理"
+            onClick={handleAdmin}
+          >
+            <Menu.Item key="admin-emp">雇员管理</Menu.Item>
+            <Menu.Item key="admin-supplier">供应商管理</Menu.Item>
+          </SubMenu>
+
           <Menu.Item key="usr" icon={<UserOutlined />}>
             个人信息
           </Menu.Item>
+
           <SubMenu
             key="sub1"
             icon={<UserOutlined />}
@@ -80,7 +99,7 @@ function AdminIndex(props) {
           </SubMenu>
 
           <Menu.Item key="9" icon={<FileOutlined />}>
-            <span>留言管理</span>
+            <span>进货管理</span>
           </Menu.Item>
         </Menu>
       </Sider>
@@ -95,12 +114,17 @@ function AdminIndex(props) {
             className="site-layout-background"
             style={{ padding: 24, minHeight: 360 }}
           >
-            <Route path="/home" exact component={AddArticle}></Route>
             <Route path="/home/add" exact component={AddGoods}></Route>
             <Route path="/home/self" exact component={Author}></Route>
             <Route path="/home/list/" component={GoodsList}></Route>
-            <Route path="/home/add/:id" exact component={AddArticle}></Route>
+            <Route path="/home/add/:id" exact component={AddGoods}></Route>
             <Route path="/home/recycle" exact component={RecycleList}></Route>
+            <Route path="/home/admin/emp" exact component={EmpList}></Route>
+            <Route
+              path="/home/admin/sup"
+              exact
+              component={SupplierList}
+            ></Route>
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>Ant Design + React</Footer>

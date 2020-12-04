@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { List, Row, Col, Modal, message, Button, Space, Skeleton } from "antd";
+import {
+  List,
+  Row,
+  Col,
+  Modal,
+  message,
+  Button,
+  Space,
+  Skeleton,
+  Pagination,
+  ConfigProvider,
+} from "antd";
+import zhCN from "antd/lib/locale/zh_CN";
+
 import axios from "axios";
 import servicePath from "../config/apiUrl";
 import "../static/css/ArticleList.css";
@@ -23,6 +36,7 @@ function ArticleList(props) {
       setIsLoading(false);
     });
   };
+  const gotoPage = () => {};
   const delArticle = (id, deid = 1) => {
     confirm({
       title: "确定要删除这个货物吗？",
@@ -68,7 +82,12 @@ function ArticleList(props) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: "white",
+        padding: "30px 40px 60px 40px",
+      }}
+    >
       <List
         header={
           <Row className="list-div">
@@ -126,7 +145,7 @@ function ArticleList(props) {
                       type="primary"
                       shape="round"
                       onClick={() => {
-                        updateArticle(item.id);
+                        updateArticle(item.goodsId);
                       }}
                     >
                       <EditOutlined />
@@ -150,6 +169,18 @@ function ArticleList(props) {
           </Skeleton>
         )}
       />
+
+      <ConfigProvider locale={zhCN}>
+        <Pagination
+          total={100}
+          hideOnSinglePage={true}
+          showSizeChanger
+          showQuickJumper
+          showTotal={(total) => `共 ${total} 条`}
+          onChange={(page, pageSize) => gotoPage(page, pageSize)}
+          style={{ textAlign: "center", paddingTop: "40px" }}
+        />
+      </ConfigProvider>
     </div>
   );
 }

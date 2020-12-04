@@ -1,0 +1,18 @@
+.add__icon {
+  font-size: 1.625rem;
+  position: relative;
+  right: 2rem;
+  bottom: 1.2rem;
+}
+.add__icon :hover {
+  color: #1890ff;
+  transition: color 1s;
+  transition-timing-function: linear;
+}
+/* .ant-modal-footer {
+  display: none;
+} */
+
+.ant-form-item-control-input-content > button {
+  position: relative;
+}

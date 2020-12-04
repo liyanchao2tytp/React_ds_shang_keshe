@@ -1,0 +1,6 @@
+.ant-divider-horizontal {
+  min-width: 80% !important;
+  width: 80% !important;
+  position: relative;
+  left: 10%;
+}
