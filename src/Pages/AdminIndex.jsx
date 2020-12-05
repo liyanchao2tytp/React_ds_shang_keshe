@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, Breadcrumb } from "antd";
 import {
   DesktopOutlined,
@@ -14,13 +14,12 @@ import AddGoods from "./AddGoods";
 import Author from "../components/Author";
 import EmpList from "../components/EmpList";
 import SupplierList from "../components/SupplierList";
-
+import CounterList from "./CounterList";
 const { Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 function AdminIndex(props) {
   const [collapsed, setCollapsed] = useState(false);
-
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
@@ -29,7 +28,9 @@ function AdminIndex(props) {
       case "usr":
         props.history.push("/home/self");
         break;
-      // case ''
+      case "counter":
+        props.history.push("/home/counter");
+        break;
     }
   };
 
@@ -87,6 +88,10 @@ function AdminIndex(props) {
             个人信息
           </Menu.Item>
 
+          <Menu.Item key="counter" icon={<FileOutlined />}>
+            <span>柜台管理</span>
+          </Menu.Item>
+
           <SubMenu
             key="sub1"
             icon={<UserOutlined />}
@@ -97,10 +102,6 @@ function AdminIndex(props) {
             <Menu.Item key="goodsList">商品列表</Menu.Item>
             <Menu.Item key="recycleList">回收站</Menu.Item>
           </SubMenu>
-
-          <Menu.Item key="9" icon={<FileOutlined />}>
-            <span>进货管理</span>
-          </Menu.Item>
         </Menu>
       </Sider>
       <Layout className="site-layout">
@@ -116,7 +117,7 @@ function AdminIndex(props) {
           >
             <Route path="/home/add" exact component={AddGoods}></Route>
             <Route path="/home/self" exact component={Author}></Route>
-            <Route path="/home/list/" component={GoodsList}></Route>
+            <Route path="/home/list" exact component={GoodsList}></Route>
             <Route path="/home/add/:id" exact component={AddGoods}></Route>
             <Route path="/home/recycle" exact component={RecycleList}></Route>
             <Route path="/home/admin/emp" exact component={EmpList}></Route>
@@ -125,6 +126,7 @@ function AdminIndex(props) {
               exact
               component={SupplierList}
             ></Route>
+            <Route path="/home/counter" exact component={CounterList}></Route>
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>Ant Design + React</Footer>

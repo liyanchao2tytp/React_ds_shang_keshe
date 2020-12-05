@@ -1,10 +1,3 @@
-/*
- * @Author: lyc
- * @Date: 2020-12-03 15:06:36
- * @LastEditors: lyc
- * @LastEditTime: 2020-12-05 10:26:00
- * @Description: file content
- */
 import React, { useEffect, useState } from "react";
 import {
   List,
@@ -16,183 +9,202 @@ import {
   Space,
   Skeleton,
   Pagination,
-  Form,
   Modal,
-  Input
+  Input,
+  Form,
+  InputNumber,
 } from "antd";
 import zhCN from "antd/lib/locale/zh_CN";
-
-import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import "../static/css/components/EmpList.css";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import Axios from "axios";
 import servicePath from "../config/apiUrl";
-import "../static/css/components/SupplierList.css"
-const { confirm } = Modal
-export default function SupplierList() {
+const { confirm } = Modal;
+export default function CounterList() {
   const [list, setList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);   //骨架屏是否加载
-  const [visible, setVisible] = useState(false);     // 弹框展开或关闭
-  const [refresh, setRef] = useState(0)             // 是否刷新
+  const [isLoading, setIsLoading] = useState(true); //骨架屏是否加载
+  const [visible, setVisible] = useState(false);
+  const [refresh, setRef] = useState(0);
   const [form] = Form.useForm();
-  const [supId, setId] = useState(0)               // 判断是添加还是修改
+
+  const [merchId, setId] = useState(0); // 判断是添加还是修改
 
   useEffect(() => {
-    Axios(servicePath.getSupplier).then((res) => {
-      console.log(res.data)
+    Axios(servicePath.counter).then((res) => {
       setList(res.data);
+      console.log(res.data);
       setIsLoading(false);
     });
   }, [refresh]);
+
+  const gotoPage = () => {};
+  /**
+   * @description: 显示弹窗
+   * @param {*}
+   * @return {*}
+   */
+  const showModal = () => {
+    setVisible(true);
+  };
+
+  /**
+   * @description: 关闭弹窗
+   * @param {*}
+   * @return {*}
+   */
   const handleCancel = () => {
-    console.log('Clicked cancel button');
+    console.log("Clicked cancel button");
     setVisible(false);
   };
   /**
    * @description: 表单提交后的回调函数
-   * @param {*} value
+   * @param {value} async 表单内键值对对象
    * @return {*}
    */
   const onFinish = (value) => {
-    console.log(supId);
-    if (supId) {
-      console.log(supId);
-      value.id = supId
+    // 如果 merchId不为0，就修改数据
+    if (merchId) {
+      value.id = merchId;
       Axios({
         method: "put",
-        url: servicePath.supplier,
+        url: servicePath.counter,
         data: value,
-        withCredentials: true
-      })
+        withCredentials: true,
+      }).then(() => (refresh ? setRef(0) : setRef(1)));
     } else {
+      //增加一条数据
       Axios({
         method: "post",
-        url: servicePath.supplier,
+        url: servicePath.counter,
         data: value,
-        withCredentials: true
-      })
+        withCredentials: true,
+      }).then(() => (refresh ? setRef(0) : setRef(1)));
     }
-
-    setVisible(false)
+    setVisible(false);
     form.resetFields();
-    refresh ? setRef(0) : setRef(1)
-  }
+  };
   /**
-    * @description: 点击修改后 显示弹窗表单 
-    *                将查询出来的数据于表单绑定
-    * @param {*} async
-    * @return {*}
-    */
-  const alterSup = async (id) => {
+   * @description: 点击修改后 显示弹窗和表单
+   *                将查询出来的数据于表单绑定
+   * @param {*} async
+   * @return {*}
+   */
+  const alterCounter = async (id) => {
     console.log(id);
     const res = await Axios({
       method: "get",
-      url: `${servicePath.supplier}/${id}`,
+      url: `${servicePath.counter}/${id}`,
       withCredentials: true,
-    })
+    });
 
-    form.setFieldsValue({   // 将查出的值 与表单绑定
-      supplier: res.data.supName,
-      contact: res.data.supContact,
-      phone: res.data.supPhone,
-      address: res.data.adress
-    })
+    form.setFieldsValue({
+      // 将查出的值 与表单绑定
+      name: res.data.counterName,
+      price: res.data.salePrice,
+      num: res.data.counterNum,
+      alarm: res.data.calarmNum,
+    });
 
-    setId(res.data.supId)
-    setVisible(true)
-  }
+    setId(res.data.merchId);
+    setVisible(true);
+  };
   /**
-   * @description: 删除供应商
-   * @param {*} id
+   * @description: 删除柜台商品信息
+   * @param {*}
    * @return {*}
    */
-  const delSup = (id) => {
+  const delCounter = (id) => {
     confirm({
-      title: "确定要删除该供应商吗？",
-      content: "删除后，供应商的所关联的商品也将全部删除",
+      title: "确定要删除该商品吗？",
+      content: "删除后，柜台中商品的信息将不能恢复",
       onOk() {
         Axios({
           method: "delete",
-          url: servicePath.supplier,
+          url: servicePath.counter,
           data: { id },
-          withCredentials: true
-        }).then(() => refresh ? setRef(0) : setRef(1))
-        message.success("删除成功")
-
+          withCredentials: true,
+        }).then(() => (refresh ? setRef(0) : setRef(1)));
+        message.success("删除成功");
       },
       onCancel() {
         message.info("取消成功");
       },
     });
-  }
-  const gotoPage = () => { };
+  };
+
   return (
     <>
       <Modal
-        title="添加供应商"
+        title="柜台管理"
         visible={visible}
-        footer={null}
         onCancel={handleCancel}
+        footer={null}
       >
-        <Form
-          layout="horizontal"
-          name="basic"
-          form={form}
-          onFinish={onFinish}
-        // preserve={false}
-        >
+        <Form layout="horizontal" name="basic" form={form} onFinish={onFinish}>
           <Form.Item
-            label="用户名"
-            name="supplier"
+            label="商品名称"
+            name="name"
             rules={[
               {
                 required: true,
-                message: '请输入供应商名称!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="联系人"
-            name="contact"
-            rules={[{
-              required: true,
-              message: "请输入联系人姓名"
-            },]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="手机号"
-            name="phone"
-            rules={[
-              {
-                required: true,
-                message: '请输入供应商联系方式!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="地&nbsp;&nbsp;&nbsp;&nbsp;址"
-            name="address"
-            rules={[
-              {
-                required: true,
-                message: '请输入所在地址!',
+                message: "请输入雇员姓名!",
               },
             ]}
           >
             <Input />
           </Form.Item>
 
+          <Form.Item
+            label="销售价格"
+            name="price"
+            rules={[
+              {
+                required: true,
+                message: "请输入雇员联系方式!",
+              },
+            ]}
+          >
+            <InputNumber min={0} />
+          </Form.Item>
+          <Form.Item
+            label="剩余数量"
+            name="num"
+            rules={[
+              {
+                required: true,
+                message: "请输入剩余数量!",
+              },
+            ]}
+          >
+            <InputNumber min={0} />
+          </Form.Item>
 
-          <Form.Item {...{ wrapperCol: { offset: 10 } }} style={{ padding: "2rem 0 0 0" }}>
+          <Form.Item
+            label="警告数量"
+            name="alarm"
+            rules={[
+              {
+                required: true,
+                message: "请输入警告数量!",
+              },
+            ]}
+          >
+            <InputNumber min={0} />
+          </Form.Item>
+
+          <Form.Item
+            {...{ wrapperCol: { offset: 10 } }}
+            style={{ padding: "2rem 0 0 0" }}
+          >
             <Button type="primary" htmlType="submit">
               确定
-        </Button>
+            </Button>
           </Form.Item>
         </Form>
-
       </Modal>
 
       <Row>
@@ -207,8 +219,8 @@ export default function SupplierList() {
         >
           <PlusCircleOutlined
             className="add__icon"
-            style={{ color: '#D9D9D9' }}
-            onClick={() => setVisible(true)}
+            style={{ color: "#D9D9D9" }}
+            onClick={showModal}
           />
           <List
             header={
@@ -217,16 +229,16 @@ export default function SupplierList() {
                   <b>编号</b>
                 </Col>
                 <Col span={4}>
-                  <b>供应商</b>
+                  <b>商品名</b>
                 </Col>
                 <Col span={4}>
-                  <b>联系人</b>
+                  <b>销售价格</b>
                 </Col>
                 <Col span={4}>
-                  <b>电话</b>
+                  <b>剩余数量</b>
                 </Col>
                 <Col span={4}>
-                  <b>地址</b>
+                  <b>警告数量</b>
                 </Col>
                 <Col span={6}>
                   <b>操作</b>
@@ -244,39 +256,38 @@ export default function SupplierList() {
                       <b>{index + 1}</b>
                     </Col>
                     <Col span={4}>
-                      <b>{item.supName}</b>
+                      <b>{item.counterName}</b>
                     </Col>
                     <Col span={4}>
-                      <b>{item.supContact}</b>
+                      <b>{item.salePrice}</b>
                     </Col>
                     <Col span={4}>
-                      <b>{item.supPhone}</b>
+                      <b>{item.counterNum}</b>
                     </Col>
                     <Col span={4}>
-                      <b>{item.adress}</b>
+                      <b>{item.calarmNum}</b>
                     </Col>
+
                     <Col span={6}>
                       <Space>
                         <Button
                           type="primary"
                           shape="round"
                           onClick={() => {
-                            alterSup(item.supId)
+                            alterCounter(item.merchId);
                           }}
                         >
                           <EditOutlined />
-                          修改
                         </Button>
                         <Button
                           type="primary"
                           danger
                           shape="round"
                           onClick={() => {
-                            delSup(item.supId);
+                            delCounter(item.merchId);
                           }}
                         >
                           <DeleteOutlined />
-                          删除
                         </Button>
                       </Space>
                     </Col>
