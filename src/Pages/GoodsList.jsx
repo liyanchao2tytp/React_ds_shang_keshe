@@ -113,8 +113,13 @@ function GoodsList(props) {
     message.info(res.data);
     setVisible(false);
   };
-  const onSearch = (value) => {
-    console.log(value);
+  const onSearch = async (value) => {
+    const res = await Axios({
+      method: "get",
+      url: `${servicePath.fuzzyGoods}?name=${value}`,
+      withCredentials: true,
+    });
+    setList(res.data);
   };
   /**
    * @description: 关闭弹窗
