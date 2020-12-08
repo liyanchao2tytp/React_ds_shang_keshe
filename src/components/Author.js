@@ -2,7 +2,7 @@
  * @Author: lyc
  * @Date: 2020-12-02 17:42:31
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-05 21:17:07
+ * @LastEditTime: 2020-12-07 17:13:32
  * @Description: file content
  */
 
@@ -14,6 +14,7 @@ import servicePath from "../config/apiUrl"
 import Descripter from "../components/Descripter"
 import AuthorSign from "../components/AuthorSign"
 import "../static/css/components/Author.css"
+
 export default function Author(porps) {
   const [emp, setEmp] = useState({
 
@@ -21,18 +22,18 @@ export default function Author(porps) {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    Axios({
-      method: "post",
-      url: servicePath.user,
-      withCredentials: true,
-      headers: { "token": token }
-    }).then(
-      (res) => {
-        setEmp(res.data.usrdetail)
-        console.log(res.data.usrdetail);
-        console.log(emp);
-      }
-    )
+    // Axios({
+    //   method: "get",
+    //   url: servicePath.user,
+    //   withCredentials: true,
+    //   headers: { "token": token }
+    // }).then(
+    //   (res) => {
+    //     setEmp(res.data.usrdetail)
+    //     console.log(res.data);
+    //     console.log(emp);
+    //   }
+    // )
   }, [])
   return (
     <>

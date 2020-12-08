@@ -2,7 +2,7 @@
  * @Author: lyc
  * @Date: 2020-12-03 15:06:36
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-05 10:26:00
+ * @LastEditTime: 2020-12-08 11:47:29
  * @Description: file content
  */
 import React, { useEffect, useState } from "react";
@@ -26,6 +26,7 @@ import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from "@ant-design/ic
 import Axios from "axios";
 import servicePath from "../config/apiUrl";
 import "../static/css/components/SupplierList.css"
+import "../components/SupplierList"
 const { confirm } = Modal
 export default function SupplierList() {
   const [list, setList] = useState([]);
