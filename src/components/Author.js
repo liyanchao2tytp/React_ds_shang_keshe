@@ -2,12 +2,12 @@
  * @Author: lyc
  * @Date: 2020-12-02 17:42:31
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-07 17:13:32
+ * @LastEditTime: 2020-12-15 18:01:56
  * @Description: file content
  */
 
 import Axios from "axios"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef } from "react"
 import { Row, Col, Avatar, Divider, Tag } from 'antd'
 import { AntDesignOutlined } from '@ant-design/icons'
 import servicePath from "../config/apiUrl"
@@ -16,31 +16,28 @@ import AuthorSign from "../components/AuthorSign"
 import "../static/css/components/Author.css"
 
 export default function Author(porps) {
-  const [emp, setEmp] = useState({
-
-  });
+  const user = useRef({});
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    // Axios({
-    //   method: "get",
-    //   url: servicePath.user,
-    //   withCredentials: true,
-    //   headers: { "token": token }
-    // }).then(
-    //   (res) => {
-    //     setEmp(res.data.usrdetail)
-    //     console.log(res.data);
-    //     console.log(emp);
-    //   }
-    // )
-  }, [])
+    Axios({
+      method: "get",
+      url: servicePath.tokenContent,
+      withCredentials: true,
+      headers: { "token": token }
+    }).then(
+      (res) => {
+        user.current = res.data
+        console.log(res.data);
+        // setUser(res.data)
+      }
+    )
+  }, [user])
   return (
     <>
       <Row >
         <Col span={7} style={{ backgroundColor: "white", height: "40rem" }}>
           <div style={{ textAlign: "center", padding: "2rem 0 1rem 0 " }}>
-
             <Avatar
               style={{ backgroundColor: '#1890ff' }}
               icon={<AntDesignOutlined />}
@@ -49,7 +46,7 @@ export default function Author(porps) {
           </div>
           <AuthorSign />
           <Col offset={3}>
-            <Descripter />
+            <Descripter user={user.current} />
           </Col>
           <Divider dashed={true}></Divider>
 

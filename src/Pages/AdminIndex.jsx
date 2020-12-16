@@ -6,7 +6,8 @@ import {
   FileOutlined,
   UserOutlined,
   UsergroupAddOutlined,
-  UserDeleteOutlined,
+  AppstoreAddOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import "../static/css/AdminIndex.css";
 import { Route } from "react-router-dom";
@@ -29,6 +30,7 @@ function AdminIndex(props) {
   const [power, setPower] = useState(1);
   useEffect(() => {
     const token = localStorage.getItem("token");
+    Axios.defaults.headers.common['token']  = token
     Axios({
       method: "get",
       url: servicePath.checkLogin,
@@ -138,7 +140,7 @@ function AdminIndex(props) {
               </Menu.Item>
               <SubMenu
                 key="sub1"
-                icon={<UserOutlined />}
+                icon={<AppstoreAddOutlined />}
                 title="库存管理"
                 onClick={handleGoodsStore}
               >
@@ -159,7 +161,7 @@ function AdminIndex(props) {
             ""
           )}
 
-          <Menu.Item key="logout" icon={<UserDeleteOutlined />}>
+          <Menu.Item key="logout" icon={<ExportOutlined />}>
             <span>退出登录</span>
           </Menu.Item>
         </Menu>

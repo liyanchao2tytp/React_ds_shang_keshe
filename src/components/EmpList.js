@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   List,
   Row,
@@ -7,8 +7,6 @@ import {
   message,
   Button,
   Space,
-
-
   Skeleton,
   Pagination,
   Modal,
@@ -32,19 +30,20 @@ export default function EmpList(props) {
   const [empId, setId] = useState(0)                 // 判断是添加还是修改
 
   const [num, setNum] = useState()         // 总条数
-  // const [page, setPage] = useState(1)      // 第几页
-  // const [size, setSize] = useState(10)      //  每页条数
-  const [extraI, setExtraI] = useState()   //当前第几个
+  const extraI = useRef(0)   //当前第几个
 
   useEffect(() => {
     getList()
   }, [refresh]);
   const getList = () => {
+    const token = localStorage.getItem('token')
     Axios({
       method: "get",
       url: servicePath.getEmp,
+      headers: { "token": token },
       withCredentials: true,
     }).then((res) => {
+      console.log(res.data);
       setList(res.data.empList);
       setNum(res.data.num)
       setIsLoading(false);
@@ -65,7 +64,7 @@ export default function EmpList(props) {
       setList(res.data.empList);
       setIsLoading(false);
     });
-    setExtraI((page - 1) * size)
+    extraI.current = (page - 1) * size
   }
   /**
    * @description: 显示弹窗
@@ -151,9 +150,6 @@ export default function EmpList(props) {
         message.info("取消成功");
       },
     })
-  }
-  const add2number = (number) => {
-    return number + extraI
   }
 
   return (
@@ -264,8 +260,7 @@ export default function EmpList(props) {
                   <Row className="list-div">
 
                     <Col span={4}>
-
-                      <b>{index + 1}{extraI}</b>
+                      <b>{extraI.current + index + 1}</b>
                     </Col>
                     <Col span={4}>
                       <b>{item.empName}</b>

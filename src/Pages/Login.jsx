@@ -5,7 +5,7 @@ import "../static/css/login.css";
 import servicePath from "../config/apiUrl";
 import axios from "axios";
 import png from "../assets/image/hawaii-water-small.png";
-import setAuthToken from "../utils/AuthToken";
+// import setAuthToken from "../utils/AuthToken";
 
 // import Check from "./Check";
 
@@ -43,7 +43,8 @@ export default function Login(props) {
       setIsLoading(false);
       if (res.data.msg === "success") {
         localStorage.setItem("token", res.data.token);
-        setAuthToken(res.data.token);
+        // setAuthToken(res.data.token);
+        // axios.defaults.headers.common['token'] = res.data.token
         props.history.push("/home");
       } else {
         console.log(res);

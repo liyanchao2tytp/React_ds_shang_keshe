@@ -91,8 +91,6 @@ export default function AddGoods(props) {
   const onFinish = (value) => {
     console.log("----onFinish----");
     console.log(value);
-
-    // id == 0 ? addGoods(value) : alterGoods(value);
     id ? alterGoods(value) : addGoods(value);
   };
   const alterGoods = (value) => {
@@ -114,6 +112,7 @@ export default function AddGoods(props) {
     })
       .then(() => {
         message.success("添加成功");
+        props.history.push("/home/list");
       })
       .catch(() => {
         message.error("添加失败");
