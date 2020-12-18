@@ -45,9 +45,11 @@ function RecycleList(props) {
     getList();
   }, [refresh]);
   const getList = () => {
+    const token = localStorage.getItem('token')
     axios({
       method: "get",
       url: servicePath.toRecycle,
+      headers:{"token":token}
     }).then((res) => {
       setList(res.data);
       setIsLoading(false);

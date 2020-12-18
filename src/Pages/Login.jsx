@@ -13,7 +13,7 @@ export default function Login(props) {
   const [userName, setUserName] = useState("");
   const [passWord, setPassWord] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {}, []);
+
   const checkLogin = () => {
     setIsLoading(true);
     if (!userName) {
@@ -43,8 +43,6 @@ export default function Login(props) {
       setIsLoading(false);
       if (res.data.msg === "success") {
         localStorage.setItem("token", res.data.token);
-        // setAuthToken(res.data.token);
-        // axios.defaults.headers.common['token'] = res.data.token
         props.history.push("/home");
       } else {
         console.log(res);
@@ -55,6 +53,11 @@ export default function Login(props) {
       setIsLoading(false);
     }, 300);
   };
+  const EnterLogin = (e) => {
+    if (e.keyCode == 13) {
+      checkLogin()
+    }
+  }
 
   return (
     <div style={{ height: "100vh" }}>
@@ -143,6 +146,7 @@ export default function Login(props) {
                 onChange={(e) => {
                   setPassWord(e.target.value);
                 }}
+                onKeyDown={(e)=>EnterLogin(e)}
               />
 
               <Button type="primary" size="large" block onClick={checkLogin}>

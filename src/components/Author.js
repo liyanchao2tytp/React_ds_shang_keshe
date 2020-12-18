@@ -2,12 +2,12 @@
  * @Author: lyc
  * @Date: 2020-12-02 17:42:31
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-15 18:01:56
+ * @LastEditTime: 2020-12-16 14:08:53
  * @Description: file content
  */
 
 import Axios from "axios"
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useState, createContext } from "react"
 import { Row, Col, Avatar, Divider, Tag } from 'antd'
 import { AntDesignOutlined } from '@ant-design/icons'
 import servicePath from "../config/apiUrl"
@@ -15,8 +15,10 @@ import Descripter from "../components/Descripter"
 import AuthorSign from "../components/AuthorSign"
 import "../static/css/components/Author.css"
 
+export const DetailContext = createContext()
+
 export default function Author(porps) {
-  const user = useRef({});
+  const [user, setUser] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem("token")
@@ -27,9 +29,7 @@ export default function Author(porps) {
       headers: { "token": token }
     }).then(
       (res) => {
-        user.current = res.data
-        console.log(res.data);
-        // setUser(res.data)
+        setUser(res.data)
       }
     )
   }, [user])
@@ -45,8 +45,11 @@ export default function Author(porps) {
             />
           </div>
           <AuthorSign />
+
           <Col offset={3}>
-            <Descripter user={user.current} />
+            <DetailContext.Provider value={user} >
+              <Descripter />
+            </DetailContext.Provider>
           </Col>
           <Divider dashed={true}></Divider>
 

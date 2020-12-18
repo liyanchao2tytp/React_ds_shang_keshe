@@ -2,11 +2,11 @@
  * @Author: lyc
  * @Date: 2020-12-01 16:15:24
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-16 13:38:14
+ * @LastEditTime: 2020-12-16 18:06:26
  * @Description: file content
  */
-let ipUrl = 'http://127.0.0.1:8080/'
-// let ipUrl = 'http://localhost:8080/'
+// let ipUrl = 'http://127.0.0.1:8080/'
+let ipUrl = 'http://localhost:8080/'
 // let ipUrl = 'http://47.93.249.50:8080/'
 // let ipUrl = 'http://192.168.83.138:8080/'
 
