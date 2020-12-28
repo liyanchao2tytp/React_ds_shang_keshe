@@ -51,6 +51,7 @@ function GoodsList(props) {
       setList(res.data);
       setIsLoading(false);
     });
+    console.log(list);
   };
   /**
    * @description: 显示表单

@@ -1,9 +1,8 @@
-/* .logo {
+.logo {
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
 }
-
 
 [data-theme="dark"] .site-layout .site-layout-background {
   background: #141414;
@@ -13,9 +12,9 @@
   height: 1rem;
   vertical-align: middle;
 }
- */
 
- .site-layout-content {
+/* --------标题栏在上侧时的样式-------- */
+/* .site-layout-content {
   min-height: 280px;
   padding: 24px;
   background: #fff;
@@ -30,4 +29,4 @@
 .ant-row-rtl #components-layout-demo-top .logo {
   float: right;
   margin: 16px 0 16px 24px;
-}
+} */
