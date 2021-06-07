@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu, Breadcrumb, Modal } from "antd";
+import { Layout, Menu, Breadcrumb, Modal ,Button} from "antd";
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -107,6 +107,7 @@ function AdminIndex(props) {
           <p>确认要退出员工管理系统吗？</p>
         </Modal>
         <div className="logo" />
+       
 
         <Menu
           theme="dark"
@@ -125,7 +126,7 @@ function AdminIndex(props) {
               title="用户管理"
               onClick={handleAdmin}
             >
-              <Menu.Item key="admin-emp">雇员管理</Menu.Item>
+              {/* <Menu.Item key="admin-emp">雇员管理</Menu.Item> */}
               <Menu.Item key="admin-supplier">供应商管理</Menu.Item>
             </SubMenu>
           ) : (
@@ -196,7 +197,7 @@ function AdminIndex(props) {
             <Route path="/home/self" exact component={Author}></Route>
 
             <Route path="/home/recycle" exact component={RecycleList}></Route>
-            <Route path="/home/admin/emp" exact component={EmpList}></Route>
+            {/* <Route path="/home/admin/emp" exact component={EmpList}></Route> */}
             {power > 2 ? (
               <>
                 <Route

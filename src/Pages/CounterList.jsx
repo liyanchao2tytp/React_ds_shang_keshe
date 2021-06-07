@@ -432,6 +432,7 @@ import {
   Input,
   Form,
   InputNumber,
+  Badge,
 } from "antd";
 import zhCN from "antd/lib/locale/zh_CN";
 import "../static/css/components/EmpList.css";
@@ -676,6 +677,14 @@ export default function CounterList() {
                     </Col>
                     <Col span={4}>
                       <b>{item.counterName}</b>
+                      {item.counterNum <= item.calarmNum && (
+                        <Badge
+                          size="small"
+                          title="缺少个数"
+                          count={item.calarmNum - item.counterNum}
+                          offset={[3, -13]}
+                        ></Badge>
+                      )}
                     </Col>
                     <Col span={4}>
                       <b>{item.salePrice}</b>

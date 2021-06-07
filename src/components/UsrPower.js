@@ -2,10 +2,10 @@
  * @Author: lyc
  * @Date: 2020-12-07 14:01:40
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-07 16:56:11
+ * @LastEditTime: 2021-06-07 20:47:32
  * @Description: file content
  */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import {
   List,
   Row,
@@ -37,18 +37,43 @@ export default function UserPower() {
   const [visible, setVisible] = useState(false);
   const [refresh, setRef] = useState(0);
   const [form] = Form.useForm();
-
+  const [num, setNum] = useState(0);
   const [merchId, setId] = useState(0); // 判断是添加还是修改
+  
+  const extraI = useRef(0)   //当前第几个
 
   useEffect(() => {
-    Axios(servicePath.getUser).then((res) => {
-      setList(res.data);
+    getList();
+  }, [refresh]);
+  const getList = () => {
+    
+    Axios({
+      method: "get",
+      url: servicePath.getUser,
+      withCredentials:true
+    }).then((res) => {
+      setList(res.data.userList);
       console.log(res.data);
       setIsLoading(false);
+      setNum(res.data.num);
     });
-  }, [refresh]);
-
-  const gotoPage = () => { };
+  }
+  const gotoPage = (page, size) => {
+    Axios({
+      method: "get",
+      // url: `${servicePath.getEmp}?page=${page}&size=${pageSize}`,
+      url: servicePath.getUser,
+      params: {
+        page,
+        size
+      },
+      withCredentials: true
+    }).then((res) => {
+      setList(res.data.userList);
+      setIsLoading(false);
+    });
+    extraI.current = (page - 1) * size
+  }
   /**
    * @description: 显示弹窗
    * @param {*}
@@ -115,6 +140,7 @@ export default function UserPower() {
       name: res.data.userName,
       word: res.data.passWord,
       power: res.data.career,
+      post: res.data.post
     });
 
     setId(res.data.id);
@@ -190,7 +216,18 @@ export default function UserPower() {
           >
             <InputNumber min={1} max={5} />
           </Form.Item>
-
+          <Form.Item
+            label="职&nbsp;&nbsp;&nbsp;&nbsp;位"
+            name="post"
+            rules={[
+              {
+                required: true,
+                message: "请输入当前用户的职位!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
           <Form.Item
             {...{ wrapperCol: { offset: 10 } }}
@@ -224,17 +261,24 @@ export default function UserPower() {
                 <Col span={3}>
                   <b>编号</b>
                 </Col>
-                <Col span={5}>
+                <Col span={3}>
                   <b>用户名</b>
+                </Col>
+                <Col span={2}>
+                  <b>签次数</b>
                 </Col>
                 <Col span={5}>
                   <b>密码</b>
                 </Col>
-                <Col span={5}>
-                  <b>权限等级</b>
+                
+                <Col span={3}>
+                  <b>权限</b>
                 </Col>
-
-                <Col span={6}>
+                
+                <Col span={3}>
+                  <b>职位</b>
+                </Col>
+                <Col span={5}>
                   <b>操作</b>
                 </Col>
               </Row>
@@ -247,20 +291,25 @@ export default function UserPower() {
                 <List.Item>
                   <Row className="list-div">
                     <Col span={3}>
-                      <b>{index + 1}</b>
+                      <b>{extraI.current + index +1 }</b>
                     </Col>
-                    <Col span={5}>
+                    <Col span={3}>
                       <b>{item.userName}</b>
+                    </Col>
+                    <Col span={2}>
+                      <b>{item.num }</b>
                     </Col>
                     <Col span={5}>
                       <b>{item.passWord}</b>
                     </Col>
-                    <Col span={5}>
+                    <Col span={2}>
                       <b>{item.career}</b>
                     </Col>
+                    <Col span={4}>
+                      <b>{ item.post }</b>
+                    </Col>
 
-
-                    <Col span={6}>
+                    <Col span={5}>
                       <Space>
                         <Button
                           type="primary"
@@ -289,9 +338,9 @@ export default function UserPower() {
             )}
           />
 
-          <ConfigProvider locale={zhCN}>
-            <Pagination
-              total={100}
+         <ConfigProvider locale={zhCN}>
+         <Pagination
+              total={num}
               hideOnSinglePage={true}
               showSizeChanger
               showQuickJumper
