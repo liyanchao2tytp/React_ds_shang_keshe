@@ -2,7 +2,7 @@
  * @Author: lyc
  * @Date: 2020-12-01 16:15:24
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-26 14:41:55
+ * @LastEditTime: 2021-06-15 17:46:44
  * @Description: file content
  */
 // let ipUrl = 'http://127.0.0.1:8080/'
@@ -25,6 +25,8 @@ let servicePath = {
   storeToCounter: ipUrl + 'storeToCounter', // 商品到柜台
   counter: ipUrl + 'counter',
   tokenContent: ipUrl + 'user',              // 柜台
-  orders: ipUrl + 'order'                    // 订单
+  orders: ipUrl + 'order',                   // 订单
+  noSign: ipUrl + '/usr/nosign',             // 未签到人的名单
+  
 }
 export default servicePath;

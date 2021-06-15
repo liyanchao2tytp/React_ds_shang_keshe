@@ -2,10 +2,10 @@
  * @Author: lyc
  * @Date: 2020-12-07 14:01:40
  * @LastEditors: lyc
- * @LastEditTime: 2021-06-07 20:47:32
+ * @LastEditTime: 2021-06-15 17:43:03
  * @Description: file content
  */
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   List,
   Row,
@@ -39,18 +39,18 @@ export default function UserPower() {
   const [form] = Form.useForm();
   const [num, setNum] = useState(0);
   const [merchId, setId] = useState(0); // 判断是添加还是修改
-  
+
   const extraI = useRef(0)   //当前第几个
 
   useEffect(() => {
     getList();
   }, [refresh]);
   const getList = () => {
-    
+
     Axios({
       method: "get",
       url: servicePath.getUser,
-      withCredentials:true
+      withCredentials: true
     }).then((res) => {
       setList(res.data.userList);
       console.log(res.data);
@@ -170,6 +170,27 @@ export default function UserPower() {
     });
   };
 
+  /**
+   * @description: 显示未签到的用户列表
+   * @param {*} async
+   * @return {*}
+   */
+  const showNoSignIn = async () => {
+
+    const res = await Axios({
+      method: "GET",
+      url: servicePath.noSign,
+      withCredentials: true
+    });
+    setList(res.data);
+    extraI.current = 0;
+    document.getElementById('pagenitoer').style.display = 'none';
+    let aDiv = document.getElementsByClassName('uname');
+    for (let i = 0; i < aDiv.length; i++) {
+      aDiv[i].style.color = "red";
+    }
+
+  }
   return (
     <>
       <Modal
@@ -255,6 +276,11 @@ export default function UserPower() {
             style={{ color: "#D9D9D9" }}
             onClick={showModal}
           />
+          <Button
+            danger
+            onClick={showNoSignIn}>
+            未签到名单
+            </Button>
           <List
             header={
               <Row className="list-div">
@@ -270,11 +296,11 @@ export default function UserPower() {
                 <Col span={5}>
                   <b>密码</b>
                 </Col>
-                
+
                 <Col span={3}>
                   <b>权限</b>
                 </Col>
-                
+
                 <Col span={3}>
                   <b>职位</b>
                 </Col>
@@ -291,13 +317,13 @@ export default function UserPower() {
                 <List.Item>
                   <Row className="list-div">
                     <Col span={3}>
-                      <b>{extraI.current + index +1 }</b>
+                      <b>{extraI.current + index + 1}</b>
                     </Col>
                     <Col span={3}>
-                      <b>{item.userName}</b>
+                      <b className='uname'>{item.userName}</b>
                     </Col>
                     <Col span={2}>
-                      <b>{item.num }</b>
+                      <b>{item.num}</b>
                     </Col>
                     <Col span={5}>
                       <b>{item.passWord}</b>
@@ -306,7 +332,7 @@ export default function UserPower() {
                       <b>{item.career}</b>
                     </Col>
                     <Col span={4}>
-                      <b>{ item.post }</b>
+                      <b>{item.post}</b>
                     </Col>
 
                     <Col span={5}>
@@ -337,18 +363,19 @@ export default function UserPower() {
               </Skeleton>
             )}
           />
-
-         <ConfigProvider locale={zhCN}>
-         <Pagination
-              total={num}
-              hideOnSinglePage={true}
-              showSizeChanger
-              showQuickJumper
-              showTotal={(total) => `共 ${total} 条`}
-              onChange={(page, pageSize) => gotoPage(page, pageSize)}
-              style={{ textAlign: "center", paddingTop: "50px" }}
-            />
-          </ConfigProvider>
+          <div id='pagenitoer'>
+            <ConfigProvider locale={zhCN}>
+              <Pagination
+                total={num}
+                hideOnSinglePage={true}
+                showSizeChanger
+                showQuickJumper
+                showTotal={(total) => `共 ${total} 条`}
+                onChange={(page, pageSize) => gotoPage(page, pageSize)}
+                style={{ textAlign: "center", paddingTop: "50px" }}
+              />
+            </ConfigProvider>
+          </div>
         </Col>
       </Row>
     </>

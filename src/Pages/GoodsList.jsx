@@ -42,6 +42,12 @@ function GoodsList(props) {
   useEffect(() => {
     getList();
   }, [refresh]);
+  
+  /**
+   * @description: 获取商品列表
+   * @param {*}
+   * @return {*}
+   */
   const getList = () => {
     axios({
       method: "get",
@@ -114,6 +120,11 @@ function GoodsList(props) {
     message.info(res.data);
     setVisible(false);
   };
+  /**
+   * @description: 模糊查询商品名
+   * @param {*} async
+   * @return {*}
+   */
   const onSearch = async (value) => {
     const res = await Axios({
       method: "get",
