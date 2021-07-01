@@ -1,0 +1,6 @@
+.ant-ribbon-placement-end {
+  transition: all 0.8s;
+}
+.ant-ribbon-placement-end:hover {
+  background-color: #1890ff !important;
+}

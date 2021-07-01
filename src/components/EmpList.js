@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   List,
   Row,
@@ -19,7 +19,8 @@ import "../static/css/components/EmpList.css"
 import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import Axios from "axios";
 import servicePath from "../config/apiUrl";
-export default function EmpList() {
+const { confirm } = Modal
+export default function EmpList(props) {
   const [list, setList] = useState([]);
   const [isLoading, setIsLoading] = useState(true); //骨架屏是否加载
   const [visible, setVisible] = useState(false);
@@ -28,16 +29,43 @@ export default function EmpList() {
 
   const [empId, setId] = useState(0)                 // 判断是添加还是修改
 
-
+  const [num, setNum] = useState()         // 总条数
+  const extraI = useRef(0)   //当前第几个
 
   useEffect(() => {
-    Axios(servicePath.getEmp).then((res) => {
-      setList(res.data);
+    getList()
+  }, [refresh]);
+  const getList = () => {
+    const token = localStorage.getItem('token')
+    Axios({
+      method: "get",
+      url: servicePath.getEmp,
+      headers: { "token": token },
+      withCredentials: true,
+    }).then((res) => {
+      console.log(res.data);
+      setList(res.data.empList);
+      setNum(res.data.num)
       setIsLoading(false);
     });
-  }, [refresh]);
+  }
 
-  const gotoPage = () => { };
+  const gotoPage = (page, size) => {
+    Axios({
+      method: "get",
+      // url: `${servicePath.getEmp}?page=${page}&size=${pageSize}`,
+      url: servicePath.getEmp,
+      params: {
+        page,
+        size
+      },
+      withCredentials: true
+    }).then((res) => {
+      setList(res.data.empList);
+      setIsLoading(false);
+    });
+    extraI.current = (page - 1) * size
+  }
   /**
    * @description: 显示弹窗
    * @param {*}
@@ -61,17 +89,17 @@ export default function EmpList() {
    * @param {value} async 表单内键值对对象
    * @return {*}
    */
-  const onFinish = (value) => {
-    if (empId) {  // 如果 empId不为0，就修改文章
+  const onFinish = async (value) => {
+    if (empId) {  // 如果 
       value.id = empId
-      Axios({
+      await Axios({
         method: "put",
         url: servicePath.Emp,
         data: value,
         withCredentials: true
       })
     } else {  // 添加雇员
-      Axios({
+      await Axios({
         method: "post",
         url: servicePath.Emp,
         data: value,
@@ -90,7 +118,6 @@ export default function EmpList() {
    * @return {*}
    */
   const alterEmp = async (id) => {
-    console.log(id);
     const res = await Axios({
       method: "get",
       url: `${servicePath.Emp}/${id}`,
@@ -102,10 +129,27 @@ export default function EmpList() {
       phone: res.data.empPhone,
       post: res.data.empPost
     })
-    // form.setF
-    setId(res.data.empId)
 
+    setId(res.data.empId)
     setVisible(true)
+  }
+  const delEmp = (id) => {
+    confirm({
+      title: "确定要删除该雇员吗？",
+      content: "删除后，雇员的信息将不能恢复",
+      onOk() {
+        Axios({
+          method: "delete",
+          url: servicePath.Emp,
+          data: { id },
+          withCredentials: true
+        }).then(() => refresh ? setRef(0) : setRef(1))
+        message.success("删除成功")
+      },
+      onCancel() {
+        message.info("取消成功");
+      },
+    })
   }
 
   return (
@@ -113,7 +157,6 @@ export default function EmpList() {
       <Modal
         title="添加雇员"
         visible={visible}
-
         onCancel={handleCancel}
         footer={null}
       >
@@ -122,7 +165,6 @@ export default function EmpList() {
           name="basic"
           form={form}
           onFinish={onFinish}
-        // preserve={false}
         >
           <Form.Item
             label="用户名"
@@ -218,7 +260,7 @@ export default function EmpList() {
                   <Row className="list-div">
 
                     <Col span={4}>
-                      <b>{index + 1}</b>
+                      <b>{extraI.current + index + 1}</b>
                     </Col>
                     <Col span={4}>
                       <b>{item.empName}</b>
@@ -247,7 +289,7 @@ export default function EmpList() {
                           danger
                           shape="round"
                           onClick={() => {
-                            // delArticle(item.goodsId);
+                            delEmp(item.empId);
                           }}
                         >
                           <DeleteOutlined />
@@ -263,7 +305,7 @@ export default function EmpList() {
 
           <ConfigProvider locale={zhCN}>
             <Pagination
-              total={100}
+              total={num}
               hideOnSinglePage={true}
               showSizeChanger
               showQuickJumper
@@ -277,4 +319,3 @@ export default function EmpList() {
     </>
   );
 }
-

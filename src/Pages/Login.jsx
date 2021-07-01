@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Card, Spin, message } from "antd";
 import { KeyOutlined, UserOutlined } from "@ant-design/icons";
 import "../static/css/login.css";
 import servicePath from "../config/apiUrl";
 import axios from "axios";
 import png from "../assets/image/hawaii-water-small.png";
-import setAuthToken from "../utils/AuthToken";
+// import setAuthToken from "../utils/AuthToken";
+
+// import Check from "./Check";
+
 export default function Login(props) {
   const [userName, setUserName] = useState("");
   const [passWord, setPassWord] = useState("");
@@ -40,7 +43,6 @@ export default function Login(props) {
       setIsLoading(false);
       if (res.data.msg === "success") {
         localStorage.setItem("token", res.data.token);
-        setAuthToken(res.data.token);
         props.history.push("/home");
       } else {
         console.log(res);
@@ -51,10 +53,16 @@ export default function Login(props) {
       setIsLoading(false);
     }, 300);
   };
+  const EnterLogin = (e) => {
+    if (e.keyCode == 13) {
+      checkLogin()
+    }
+  }
 
   return (
     <div style={{ height: "100vh" }}>
       <div>
+        {/* <Check /> */}
         <svg
           width="0"
           height="0"
@@ -114,7 +122,7 @@ export default function Login(props) {
         >
           <div>
             <Card
-              title="Login Blog System"
+              title="Login Company System"
               bordered={true}
               style={{ width: 400, backgroundColor: "rgb(255,255,255,0.3)" }}
             >
@@ -122,24 +130,25 @@ export default function Login(props) {
                 id="userName"
                 size="large"
                 placeholder="Enter your userName"
+                style={{ margin: "0 0 1rem 0" }}
                 prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
                 onChange={(e) => {
                   setUserName(e.target.value);
                 }}
               />
-              <br />
-              <br />
+
               <Input.Password
                 id="password"
                 size="large"
                 placeholder="Enter your password"
                 prefix={<KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
+                style={{ margin: "0 0 1rem 0" }}
                 onChange={(e) => {
                   setPassWord(e.target.value);
                 }}
+                onKeyDown={(e)=>EnterLogin(e)}
               />
-              <br />
-              <br />
+
               <Button type="primary" size="large" block onClick={checkLogin}>
                 Login in
               </Button>

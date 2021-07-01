@@ -4,9 +4,6 @@
   margin: 16px;
 }
 
-/* .site-layout .site-layout-background {
-  background: #fff;
-} */
 [data-theme="dark"] .site-layout .site-layout-background {
   background: #141414;
 }
@@ -15,3 +12,21 @@
   height: 1rem;
   vertical-align: middle;
 }
+
+/* --------标题栏在上侧时的样式-------- */
+/* .site-layout-content {
+  min-height: 280px;
+  padding: 24px;
+  background: #fff;
+}
+#components-layout-demo-top .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+.ant-row-rtl #components-layout-demo-top .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+} */

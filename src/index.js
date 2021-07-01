@@ -1,11 +1,18 @@
+/*
+ * @Author: lyc
+ * @Date: 2020-12-02 12:00:17
+ * @LastEditors: lyc
+ * @LastEditTime: 2020-12-20 13:27:11
+ * @Description: file content
+ */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Main from './Pages/Main';
 import * as serviceWorker from './serviceWorker';
-import 'antd/dist/antd.css'; 
+import './index.less'
 
 ReactDOM.render(
-    <Main />,
+  <Main />,
   document.getElementById('root')
 );
 

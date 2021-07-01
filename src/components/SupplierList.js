@@ -2,7 +2,7 @@
  * @Author: lyc
  * @Date: 2020-12-03 15:06:36
  * @LastEditors: lyc
- * @LastEditTime: 2020-12-05 01:34:50
+ * @LastEditTime: 2020-12-08 11:47:29
  * @Description: file content
  */
 import React, { useEffect, useState } from "react";
@@ -26,6 +26,8 @@ import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from "@ant-design/ic
 import Axios from "axios";
 import servicePath from "../config/apiUrl";
 import "../static/css/components/SupplierList.css"
+import "../components/SupplierList"
+const { confirm } = Modal
 export default function SupplierList() {
   const [list, setList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);   //骨架屏是否加载
@@ -45,7 +47,11 @@ export default function SupplierList() {
     console.log('Clicked cancel button');
     setVisible(false);
   };
-
+  /**
+   * @description: 表单提交后的回调函数
+   * @param {*} value
+   * @return {*}
+   */
   const onFinish = (value) => {
     console.log(supId);
     if (supId) {
@@ -90,9 +96,33 @@ export default function SupplierList() {
       phone: res.data.supPhone,
       address: res.data.adress
     })
-    setId(res.data.supId)
 
+    setId(res.data.supId)
     setVisible(true)
+  }
+  /**
+   * @description: 删除供应商
+   * @param {*} id
+   * @return {*}
+   */
+  const delSup = (id) => {
+    confirm({
+      title: "确定要删除该供应商吗？",
+      content: "删除后，供应商的所关联的商品也将全部删除",
+      onOk() {
+        Axios({
+          method: "delete",
+          url: servicePath.supplier,
+          data: { id },
+          withCredentials: true
+        }).then(() => refresh ? setRef(0) : setRef(1))
+        message.success("删除成功")
+
+      },
+      onCancel() {
+        message.info("取消成功");
+      },
+    });
   }
   const gotoPage = () => { };
   return (
@@ -243,7 +273,7 @@ export default function SupplierList() {
                           danger
                           shape="round"
                           onClick={() => {
-                            // delArticle(item.goodsId);
+                            delSup(item.supId);
                           }}
                         >
                           <DeleteOutlined />

@@ -1,41 +1,84 @@
 import React, { useState, useEffect } from "react";
-import { List, Row, Col, Modal, message, Button, Space, Skeleton } from "antd";
+import {
+  List,
+  Row,
+  Col,
+  Modal,
+  message,
+  Button,
+  Space,
+  Skeleton,
+  Pagination,
+  Badge,
+  ConfigProvider,
+  Input,
+} from "antd";
+import zhCN from "antd/lib/locale/zh_CN";
+
 import axios from "axios";
 import servicePath from "../config/apiUrl";
-import "../static/css/ArticleList.css";
 import {
   DeleteOutlined,
-  EditOutlined,
-  InteractionFilled,
+  AudioOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
+import "../static/css/GoodsList.css";
+import "../static/css/ArticleList.css";
+
 const { confirm } = Modal;
+const { Search } = Input;
 
 function RecycleList(props) {
   const [list, setList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [refresh, setRe] = useState(0);
+  const [goodsId, setId] = useState();
+  const [refresh, setRef] = useState(0);
+  const suffix = (
+    <AudioOutlined
+      style={{
+        fontSize: 16,
+        color: "#1890ff",
+      }}
+    />
+  );
   useEffect(() => {
     getList();
   }, [refresh]);
   const getList = () => {
+    const token = localStorage.getItem('token')
     axios({
       method: "get",
-      url: servicePath.getRecycleArticleList,
-      withCredentials: true,
+      url: servicePath.toRecycle,
+      headers:{"token":token}
     }).then((res) => {
-      setList(res.data.articleList);
+      setList(res.data);
       setIsLoading(false);
     });
   };
-  const delArticle = (id) => {
+
+  /**
+   * @description: 跳到指定页
+   * @param {*}
+   * @return {*}
+   */
+  const gotoPage = () => {};
+  /**
+   * @description: 将货物放入回收站
+   * @param {*}
+   * @return {*}
+   */
+  const delGoods = (id) => {
     confirm({
-      title: "确定要删除这篇博客文章吗？",
-      content: "删除后，你的博客文章将在首页不再显示",
+      title: "确定要删除这个货物吗？",
+      content: "删除后，货物信息将无法找回",
       onOk() {
-        axios(`${servicePath.delArticle}/${id}`, {
+        axios({
+          method: "delete",
+          url: `${servicePath.goods}`,
+          data: { id },
           withCredentials: true,
         }).then((res) => {
-          message.success("文章删除成功");
+          message.success("删除成功");
           getList();
         });
       },
@@ -44,27 +87,34 @@ function RecycleList(props) {
       },
     });
   };
-  const updateArticle = (id) => {
-    props.history.push(`/home/add/${id}`);
-  };
 
-  const changeIsRecycle = (id, yn_id) => {
-    let dataProps = {
-      id,
-      yn_goto_recycle: yn_id,
-    };
+  /**
+   * @description: 撤回到货物列表中
+   * @param {*}
+   * @return {*}
+   */
+  const ToGoods = (id, deid = 0) => {
     axios({
-      method: "post",
-      url: `${servicePath.delArticleToRecycle}`,
-      data: dataProps,
+      method: "put",
+      url: `${servicePath.toRecycle}`,
+      data: {
+        id,
+        yn_goto_recycle: deid,
+      },
       withCredentials: true,
     }).then((res) => {
-      refresh ? setRe(0) : setRe(1);
+      message.success("撤回成功");
+      getList();
     });
   };
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: "white",
+        padding: "30px 40px 60px 40px",
+      }}
+    >
       <List
         header={
           <Row className="list-div">
@@ -100,8 +150,19 @@ function RecycleList(props) {
                 <Col span={2}>
                   <b>{index + 1}</b>
                 </Col>
+
                 <Col span={4}>
                   <b>{item.goodsName}</b>
+                  {item.goodsNum <= item.warnNum ? (
+                    <Badge
+                      size="small"
+                      title="缺少个数"
+                      count={item.warnNum - item.goodsNum}
+                      offset={[3, -13]}
+                    ></Badge>
+                  ) : (
+                    ""
+                  )}
                 </Col>
                 <Col span={3}>
                   <b>{item.goodsPrice}</b>
@@ -121,23 +182,22 @@ function RecycleList(props) {
                     <Button
                       type="primary"
                       shape="round"
+                      ghost
                       onClick={() => {
-                        updateArticle(item.id);
+                        ToGoods(item.goodsId);
                       }}
                     >
-                      <EditOutlined />
-                      还原
+                      <RollbackOutlined />
                     </Button>
                     <Button
                       type="primary"
                       danger
                       shape="round"
                       onClick={() => {
-                        delArticle(item.id);
+                        delGoods(item.goodsId);
                       }}
                     >
                       <DeleteOutlined />
-                      删除
                     </Button>
                   </Space>
                 </Col>
@@ -146,7 +206,20 @@ function RecycleList(props) {
           </Skeleton>
         )}
       />
+
+      <ConfigProvider locale={zhCN}>
+        <Pagination
+          total={100}
+          hideOnSinglePage={true}
+          showSizeChanger
+          showQuickJumper
+          showTotal={(total) => `共 ${total} 条`}
+          onChange={(page, pageSize) => gotoPage(page, pageSize)}
+          style={{ textAlign: "center", paddingTop: "40px" }}
+        />
+      </ConfigProvider>
     </div>
   );
 }
+
 export default RecycleList;
